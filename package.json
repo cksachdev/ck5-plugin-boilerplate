@@ -1,0 +1,38 @@
+{
+    "name": "ck5-plugin-boilerplate",
+    "version": "1.0.0",
+    "description": "CKEditor 5 Plugin boilerplate",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack --mode development"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cksachdev/ck5-plugin-boilerplate.git"
+    },
+    "keywords": [
+        "ckeditor",
+        "plugins",
+        "boilerplate"
+    ],
+    "author": "Chetan Sachdev",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/cksachdev/ck5-plugin-boilerplate/issues"
+    },
+    "homepage": "https://github.com/cksachdev/ck5-plugin-boilerplate#readme",
+    "dependencies": {
+        "@ckeditor/ckeditor5-basic-styles": "^15.0.0",
+        "@ckeditor/ckeditor5-dev-utils": "^12.0.5",
+        "@ckeditor/ckeditor5-editor-classic": "^15.0.0",
+        "@ckeditor/ckeditor5-essentials": "^15.0.0",
+        "@ckeditor/ckeditor5-paragraph": "^15.0.0",
+        "@ckeditor/ckeditor5-theme-lark": "^15.0.0",
+        "postcss-loader": "^3.0.0",
+        "raw-loader": "^3.1.0",
+        "style-loader": "^1.0.0",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10"
+    }
+}

@@ -11,6 +11,8 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 
 import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
+import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
+
 
 class InsertImage extends Plugin {
     init() {
@@ -51,6 +53,7 @@ ClassicEditor
     })
     .then(editor => {
         console.log('Editor was initialized', editor);
+        CKEditorInspector.attach(editor);
     })
     .catch(error => {
         console.error(error.stack);

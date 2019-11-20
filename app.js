@@ -5,7 +5,6 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Image from '@ckeditor/ckeditor5-image/src/image';
-import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption';
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
@@ -25,24 +24,25 @@ class InsertImage extends Plugin {
             const view = new ButtonView(locale);
 
             view.set({
-                label: 'Insert image',
-                icon: imageIcon,
+                label: 'Add Equations',
+                withText: true,
                 tooltip: true
             });
 
             // Callback executed once the image is clicked.
-            view.on('execute', () => {
-                const imageUrl = prompt('Image URL');
-
-                editor.model.change(writer => {
-                    const imageElement = writer.createElement('image', {
-                        src: imageUrl
-                    });
-
-                    // Insert the image in the current selection location.
-                    editor.model.insertContent(imageElement, editor.model.document.selection);
-                });
+            this.listenTo(view, 'execute', () => {
+                openModel();
             });
+
+            window.addEventListener('setDatatoCK', function(data){
+                editor.model.change( writer => {
+                    const imageElement = writer.createElement( 'image', {
+                        src: data.detail
+                    } );
+                    // Insert the image in the current selection location.
+                    editor.model.insertContent( imageElement, editor.model.document.selection );
+                } );
+            })
 
             return view;
         });
@@ -51,7 +51,7 @@ class InsertImage extends Plugin {
 
 ClassicEditor
     .create(document.querySelector('#editor'), {
-        plugins: [Essentials, Paragraph, Bold, Italic, Image, InsertImage, ImageCaption],
+        plugins: [Essentials, Paragraph, Bold, Italic, Image, InsertImage],
         toolbar: ['bold', 'italic', 'insertImage']
     })
     .then(editor => {

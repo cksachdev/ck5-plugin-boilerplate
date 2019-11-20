@@ -1,21 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <title>CKEditor 5 Framework – Quick start</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        
+    </style>
+    <link rel="stylesheet" href="node_modules/remodal/dist/remodal.css">
+    <link rel="stylesheet" href="node_modules/remodal/dist/remodal-default-theme.css">
 </head>
-
 <body>
     <div id="editor">
-        <p>Simple image:</p>
-
-        <figure class="image">
-            <img src="https://via.placeholder.com/1000x300/02c7cd/fff?text=Placeholder%20image" alt="CKEditor 5 rocks!">
-        </figure>
+        <p>Editor content goes here.</p>
     </div>
 
-    <script src="dist/bundle.js"></script>
-</body>
 
+    <div class="remodal" data-remodal-id="modal">
+        <button data-remodal-action="close" class="remodal-close"></button>
+        <h1>Add image url</h1>
+        <input type="text" id="imgUrl" placeholder="Enter image link" style="width: 100%; height:35px;">
+        <br><br>
+        <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
+        <button  onclick="loadImagetoCK()" class="remodal-confirm">OK</button>
+    </div>
+
+
+    <!-- Remember to include jQuery :) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+    <!-- jQuery Modal -->
+    <script src="node_modules//remodal/dist/remodal.js"></script>
+    <script src="dist/bundle.js"></script>
+    <script>
+
+        var inst = $('[data-remodal-id=modal]').remodal();
+        function openModel() {
+            inst.open();
+        }
+        function loadImagetoCK() {
+            let imgUrl = $("#imgUrl").val();
+            fireEvent(imgUrl);
+            inst.close();
+        }
+        function fireEvent(data) {
+            const event = new CustomEvent("setDatatoCK", {
+                "detail": data
+            });
+            window.dispatchEvent(event);
+        }
+    </script>
+</body>
 </html>

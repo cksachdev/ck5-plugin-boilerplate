@@ -39,9 +39,14 @@
         function openModel() {
             inst.open();
         }
+        function loadDataFromCktoPopup(data) {
+            inst.open();
+            $("#imgUrl").val(data.src);
+        }
         function loadImagetoCK() {
             let imgUrl = $("#imgUrl").val();
             fireEvent(imgUrl);
+            $("#imgUrl").val('');
             inst.close();
         }
         function fireEvent(data) {

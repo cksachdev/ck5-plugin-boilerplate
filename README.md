@@ -3,5 +3,5 @@ CKEditor 5 Plugin Boilerplate
 
 Building the plugin
 ```
-yarn run build
+yarn run watch
 ```

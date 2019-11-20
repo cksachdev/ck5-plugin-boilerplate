@@ -18,6 +18,9 @@ class InsertImage extends Plugin {
     init() {
         const editor = this.editor;
 
+        // window.addEventListener("asdfasf", function(editor) {
+
+        // });
         editor.ui.componentFactory.add('insertImage', locale => {
             const view = new ButtonView(locale);
 

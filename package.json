@@ -32,9 +32,11 @@
         "@ckeditor/ckeditor5-paragraph": "^15.0.0",
         "@ckeditor/ckeditor5-theme-lark": "^15.0.0",
         "@ckeditor/ckeditor5-ui": "^15.0.0",
+        "katex": "^0.11.1",
         "postcss-loader": "^3.0.0",
         "raw-loader": "^3.1.0",
         "remodal": "^1.1.1",
+        "semantic-ui": "^2.4.2",
         "style-loader": "^1.0.0",
         "webpack": "^4.41.2",
         "webpack-cli": "^3.3.10"

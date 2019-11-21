@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="semantic/dist/semantic.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.css"
+    integrity="sha384-bsHo4/LA+lkZv61JspMDQB9QP1TtO4IgOf2yYS+J6VdAYLVyx1c3XKcsHh0Vy8Ws" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.js"
+    integrity="sha384-4z8mjH4yIpuK9dIQGR1JwbrfYsStrNK6MP+2Enhue4eyo0XlBDXOIPc8b6ZU0ajz"
+    crossorigin="anonymous"></script>
+  <style>
+    /* The Modal (background) */
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      /* Full height */
+      overflow: auto;
+      /* Enable scroll if needed */
+      background-color: rgb(0, 0, 0);
+      /* Fallback color */
+      background-color: rgba(0, 0, 0, 0.4);
+      /* Black w/ opacity */
+    }
+
+    .ui.grid>[class*="two wide"].column {
+      width: 16.66667% !important;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .space {
+      margin-top: 10px;
+      margin-left: 20%;
+    }
+
+    /* Modal Header */
+    .modal-header {
+      padding: 2px 16px;
+      background-color: #5cb85c;
+      color: white;
+    }
+
+    /* Modal Body */
+    .modal-body {
+      padding: 2px 16px;
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+      padding: 2px 16px;
+      background-color: #5cb85c;
+      color: white;
+    }
+
+    .math-content {
+      min-height: 300px;
+      height: 300px;
+      overflow-y: scroll;
+      font-family: noto;
+    }
+
+    /* Modal Content */
+    .modal-content {
+      position: relative;
+      background-color: #fefefe;
+      margin: auto;
+      padding: 0;
+      border: 1px solid #888;
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      animation-name: animatetop;
+      animation-duration: 0.4s
+    }
+
+    /* Add Animation */
+    @keyframes animatetop {
+      from {
+        top: -300px;
+        opacity: 0
+      }
+
+      to {
+        top: 0;
+        opacity: 1
+      }
+    }
+
+    #myModal {
+      position: relative;
+    }
+
+    .ui.tabular.men {
+      top: 15%;
+      width: 450px;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="ui button yellow create_btn" type="button" id="test">Create</button>
+  <div class="ui modal test">
+    <i class="close icon"></i>
+    <div id="myModal" class="ui tabular menu math-modal">
+      <div class="item" data-tab="library">Library</div>
+      <div class="item" data-tab="symbols">Symbols</div>
+      <div class="item" data-tab="equations">Equations</div>
+      <div class="item" data-tab="advanced">Advanced</div>
+    </div>
+    <div class="ui tab" data-tab="library">
+      <!-- Tab Content !-->
+      <p>This is library tab</p>
+      <div id="Area" class="space"></div>
+      <div id="Quadratic" class="space"></div>
+      <div id="Binomial theorem" class="space"></div>
+      <div id="Expansion of a sum" class="space"></div>
+      <div id="Fourier series" class="space"></div>
+      <div id="Slope of a line" class="space"></div>
+      <div id="Distance between two points" class="space"></div>
+      <div id="Volume of a sphere" class="space"></div>
+      <div id="Product rule" class="space"></div>
+    </div>
+    <div class="ui tab" data-tab="symbols">
+      <!-- Tab Content !-->
+      <p>This is symbols tab</p>
+      <div id="binomial" class="space"></div>
+      <div id="matrices" class="space"></div>
+    </div>
+    <div class="ui tab" data-tab="equations">
+      <p>This is equations tab</p>
+      <div id="rtarrdel" class="space"></div>
+      <div id="sint" class="space"></div>
+      <div id="pdiff" class="space"></div>
+      <!-- Tab Content !-->
+    </div>
+    <div class="ui tab" data-tab="advanced">
+      <!-- Tab Content !-->
+      <p>This is advanced tab</p>
+      <div id="delta" class="space"></div>
+      <div id="darr" class="space"></div>
+    </div>
+    <!--    <div class="actions">
+            <div class="ui positive right labeled icon button">
+                Add
+                <i class="checkmark icon"></i>
+            </div> !-->
+  </div>
+  </div>
+  <script>
+    //   $(function() {
+    $("#test").click(function () {
+      $(".test").modal('show');
+    });
+    $(".test").modal({
+      width: 400,
+      height: 200,
+      closable: true
+    });
+    $('.ui.button')
+      .on('click', function () {
+        // programmatically activating tab
+        $.tab('change tab', 'library');
+      });
+    $('.tabular.menu .item').tab();
+
+    $('#Area').on("click", function () {
+      alert(1);
+    });
+    var librarytab = [{
+      "title": "Area",
+      "latex": "A = \\pi r^2"
+    },
+    {
+      "title": "Quadratic",
+      "latex": "x = \\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"
+    },
+    {
+      "title": "Binomial theorem",
+      "latex": "(x+a)^n = \\sum _{k=0}^n(\\frac{n_{ }}{k})x^ka^{n-k}"
+    },
+    {
+      "title": "Expansion of a sum",
+      "latex": "(1+x)^n=1+\\frac{nx}{1!}+\\frac{n(n-1)x^2}{2!}+......."
+    },
+    {
+      "title": "Fourier series",
+      "latex": "f(x)=a_0+\\sum _{n=1}^{\\infty }(a_n\\cos \\frac{n\\Pi x}{L}+b_n\\sin \\frac{n\\Pi x}{L})"
+    },
+    {
+      "title": "Slope of a line",
+      "latex": "m=\\frac{y_2-y_1}{x_2-x_1}"
+    },
+    {
+      "title": "Distance between two points",
+      "latex": "d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}"
+    },
+    {
+      "title": "Volume of a sphere",
+      "latex": "\\frac{4}{3}\\pi r^3"
+    },
+    {
+      "title": "Product rule",
+      "latex": "a^n\\times a^m=a^{n+m}"
+    }
+    ];
+
+
+
+    var symbols = {
+      greek: [{
+        latex: "\\alpha"
+      },
+      {
+        latex: "\\beta"
+      },
+      {
+        latex: "\\delta"
+      },
+      {
+        latex: "\\epsilon"
+      },
+      {
+        latex: "\\eta"
+      },
+      {
+        latex: "\\gamma"
+      },
+      {
+        latex: "\\iota"
+      },
+      {
+        latex: "\\kappa"
+      },
+      {
+        latex: "\\lambda"
+      },
+      {
+        latex: "\\mu"
+      },
+      {
+        latex: "\\nu"
+      },
+      {
+        latex: "o"
+      },
+      {
+        latex: "\\omega"
+      },
+      {
+        latex: "\\phi"
+      },
+      {
+        latex: "\\pi"
+      },
+      {
+        latex: "\\psi"
+      },
+      {
+        latex: "\\rho"
+      },
+      {
+        latex: "\\sigma"
+      },
+      {
+        latex: "\\tau"
+      },
+      {
+        latex: "\\theta"
+      },
+      {
+        latex: "\\upsilon"
+      },
+      {
+        latex: "\\xi"
+      },
+      {
+        latex: "\\zeta"
+      },
+      {
+        latex: "\\Delta"
+      },
+      {
+        latex: "\\Gamma"
+      },
+      {
+        latex: "\\Lambda"
+      },
+      {
+        latex: "\\Omega"
+      },
+      {
+        latex: "\\Phi"
+      },
+      {
+        latex: "\\Pi"
+      },
+      {
+        latex: "\\Psi"
+      },
+      {
+        latex: "\\Sigma"
+      },
+      {
+        latex: "\\Theta"
+      },
+      {
+        latex: "\\Upsilon"
+      }
+      ],
+      binary: [{
+        latex: "\\ast"
+      },
+      {
+        latex: "\\times"
+      },
+      {
+        latex: "\\div"
+      },
+      {
+        latex: "\\cdot"
+      },
+      {
+        latex: "\\equiv"
+      },
+      {
+        latex: "\\cong"
+      },
+      {
+        latex: "\\ne"
+      },
+      {
+        latex: "\\sim"
+      },
+      {
+        latex: "\\simeq"
+      },
+      {
+        latex: "\\approx"
+      },
+      {
+        latex: "\\propto"
+      },
+      {
+        latex: "\\models"
+      },
+      // {
+      //   latex: "\\approxeq"
+      // },
+      {
+        latex: "\\pm"
+      },
+      {
+        latex: "\\mp"
+      },
+      {
+        latex: "\\leq"
+      },
+      {
+        latex: "\\ll"
+      },
+      {
+        latex: "\\subset"
+      },
+      {
+        latex: "\\subseteq"
+      },
+      {
+        latex: "\\in"
+      },
+      {
+        latex: "\\perp"
+      },
+      {
+        latex: "\\mid"
+      },
+      {
+        latex: "\\parallel"
+      },
+      {
+        latex: "\\notin"
+      },
+      {
+        latex: "\\cap"
+      },
+      {
+        latex: "\\cup"
+      },
+      {
+        latex: "\\geq"
+      },
+      {
+        latex: "\\wedge"
+      },
+      {
+        latex: "\\vee"
+      },
+      {
+        latex: "\\gg"
+      },
+      {
+        latex: "\\supset"
+      },
+      {
+        latex: "\\supseteq"
+      },
+      {
+        latex: "a^b"
+      },
+      {
+        latex: "\\lt"
+      },
+      {
+        latex: "\\gt"
+      },
+      {
+        latex: "\\+"
+      },
+      {
+        latex: "\\-"
+      }
+      ],
+      arrow: [{
+        latex: "\\leftarrow"
+      },
+      {
+        latex: "\\Leftarrow"
+      },
+      {
+        latex: "\\rightarrow"
+      },
+      {
+        latex: "\\Rightarrow"
+      },
+      {
+        latex: "\\leftrightarrow"
+      },
+      {
+        latex: "\\Leftrightarrow"
+      },
+
+      {
+        latex: "\\rightharpoonup"
+      },
+      {
+        latex: "\\rightharpoondown"
+      },
+        // {
+        //   latex: "\\dashleftarrow"
+        // },
+        // {
+        //   latex: "\\leftrightharpoons"
+        // }
+      ],
+      misc: [{
+        latex: "\\infty"
+      },
+      {
+        latex: "\\nabla"
+      },
+      {
+        latex: "\\partial"
+      },
+      {
+        latex: "\\angle"
+      },
+      {
+        latex: "\\measuredangle"
+      },
+      {
+        latex: "\\triangle"
+      },
+      {
+        latex: "\\square"
+      },
+      {
+        latex: "\\overrightarrow{AB}"
+      },
+      {
+        latex: "A^T"
+      },
+      {
+        latex: "A^{-1}"
+      },
+      {
+        latex: "^c"
+      },
+      {
+        latex: "^g"
+      },
+      {
+        latex: "\\overline{x}"
+      },
+      {
+        latex: "\\vec{x}"
+      },
+      {
+        latex: "\\hat{x}"
+      }
+      ]
+    }
+
+    function generateMathSymbol(createobj) {
+      var title = createobj.title;
+      var mathfx = createobj.latex;
+
+      var element = document.getElementById(title);
+
+      window.katex.render(String.raw`${mathfx}`, element, {
+        throwOnError: false
+      });
+
+    }
+
+    for (var index = 0; index < librarytab.length; index++) {
+      generateMathSymbol(librarytab[index]);
+    }
+
+    Object.keys(symbols).forEach(function (key) {
+
+      //   console.log(key, symbols[key]);
+
+    });
+
+    /*
+                var area = document.getElementById("area");
+                window.katex.render(String.raw `A = \pi r^2`, area, {
+                    throwOnError: false
+                });
+                var quadratic = document.getElementById("quadratic");
+                window.katex.render(String.raw `{x = \frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}}`, quadratic, {
+                    throwOnError: false
+                });
+                var matrices = document.getElementById("matrices");
+                window.katex.render(String.raw `{
+    \begin{matrix}
+       a & b \\
+       c & d
+    \end{matrix}
+    }`, matrices, {
+                    throwOnError: false
+                });
+
+                var rtarwdel = document.getElementById("rtarrdel");
+                window.katex.render(String.raw `{
+        \xrightarrow{\Delta}
+    }`, rtarwdel, {
+                    throwOnError: false
+                });
+
+                var sint = document.getElementById("sint");
+                window.katex.render(String.raw `{
+        \sin\theta
+    }`, sint, {
+                    throwOnError: false
+                });
+                var binomial = document.getElementById("binomial");
+                window.katex.render(String.raw `(x+a)^n=\sum _{k=0}^n(\frac{n_{ }}{k})x^ka^{n-k}`, binomial, {
+                    throwOnError: false
+                });
+                var pdiff = document.getElementById("pdiff");
+                window.katex.render(String.raw `\frac{\partial f(x,y)}{\partial x}`, pdiff, {
+                    throwOnError: false
+                });
+                var delta = document.getElementById("delta");
+                window.katex.render(String.raw `\delta`, delta, {
+                    throwOnError: false
+                });
+                var darr = document.getElementById("darr");
+                window.katex.render(String.raw `\xleftrightharpoons{abc}`, delta, {
+                    throwOnError: false
+                });*/
+    //    });
+  </script>
+</body>
+
+</html>

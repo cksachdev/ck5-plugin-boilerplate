@@ -12,116 +12,6 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.js"
     integrity="sha384-4z8mjH4yIpuK9dIQGR1JwbrfYsStrNK6MP+2Enhue4eyo0XlBDXOIPc8b6ZU0ajz"
     crossorigin="anonymous"></script>
-  <style>
-    /* The Modal (background) */
-    .modal {
-      display: none;
-      /* Hidden by default */
-      position: fixed;
-      /* Stay in place */
-      z-index: 1;
-      /* Sit on top */
-      left: 0;
-      top: 0;
-      width: 100%;
-      /* Full width */
-      height: 100%;
-      /* Full height */
-      overflow: auto;
-      /* Enable scroll if needed */
-      background-color: rgb(0, 0, 0);
-      /* Fallback color */
-      background-color: rgba(0, 0, 0, 0.4);
-      /* Black w/ opacity */
-    }
-
-    .ui.grid>[class*="two wide"].column {
-      width: 16.66667% !important;
-    }
-
-    /* The Close Button */
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .space {
-      margin-top: 10px;
-      margin-left: 20%;
-    }
-
-    /* Modal Header */
-    .modal-header {
-      padding: 2px 16px;
-      background-color: #5cb85c;
-      color: white;
-    }
-
-    /* Modal Body */
-    .modal-body {
-      padding: 2px 16px;
-    }
-
-    /* Modal Footer */
-    .modal-footer {
-      padding: 2px 16px;
-      background-color: #5cb85c;
-      color: white;
-    }
-
-    .math-content {
-      min-height: 300px;
-      height: 300px;
-      overflow-y: scroll;
-      font-family: noto;
-    }
-
-    /* Modal Content */
-    .modal-content {
-      position: relative;
-      background-color: #fefefe;
-      margin: auto;
-      padding: 0;
-      border: 1px solid #888;
-      width: 100%;
-      /* Full width */
-      height: 100%;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-      animation-name: animatetop;
-      animation-duration: 0.4s
-    }
-
-    /* Add Animation */
-    @keyframes animatetop {
-      from {
-        top: -300px;
-        opacity: 0
-      }
-
-      to {
-        top: 0;
-        opacity: 1
-      }
-    }
-
-    #myModal {
-      position: relative;
-    }
-
-    .ui.tabular.men {
-      top: 15%;
-      width: 450px;
-    }
-  </style>
 </head>
 
 <body>
@@ -137,15 +27,7 @@
     <div class="ui tab" data-tab="library">
       <!-- Tab Content !-->
       <p>This is library tab</p>
-      <div id="Area" class="space"></div>
-      <div id="Quadratic" class="space"></div>
-      <div id="Binomial theorem" class="space"></div>
-      <div id="Expansion of a sum" class="space"></div>
-      <div id="Fourier series" class="space"></div>
-      <div id="Slope of a line" class="space"></div>
-      <div id="Distance between two points" class="space"></div>
-      <div id="Volume of a sphere" class="space"></div>
-      <div id="Product rule" class="space"></div>
+      <div id="librarydiv"></div>
     </div>
     <div class="ui tab" data-tab="symbols">
       <!-- Tab Content !-->
@@ -529,13 +411,13 @@
     function generateMathSymbol(createobj) {
       var title = createobj.title;
       var mathfx = createobj.latex;
+      var element = document.createElement("div");
 
-      var element = document.getElementById(title);
 
       window.katex.render(String.raw`${mathfx}`, element, {
         throwOnError: false
       });
-
+      document.getElementById('librarydiv').appendChild(element);
     }
 
     for (var index = 0; index < librarytab.length; index++) {

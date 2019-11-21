@@ -11,8 +11,9 @@ import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 
 import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
-
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
+import katex from 'katex';
+
 
 class InsertImage extends Plugin {
     init() {
@@ -38,13 +39,45 @@ class InsertImage extends Plugin {
             return view;
         });
 
+        editor.model.schema.register('mathtex', {
+            allowWhere: '$block',
+            allowContentOf: '$block',
+            allowAttributes: [ 'id' ],
+            isLimit: true,
+        });
+      
+        editor.conversion.elementToElement({
+            model: 'mathtex',
+            view: {
+              name: 'span',
+              classes: 'math-tex',
+              id: 'ss'
+            }
+        });
+
         window.addEventListener('setDatatoCK', function(data){
+            const selection = editor.model.document.selection;
             editor.model.change( writer => {
-                const imageElement = writer.createElement( 'image', {
-                    src: data.detail
-                } );
-                // Insert the image in the current selection location.
-                editor.model.insertContent( imageElement, editor.model.document.selection );
+                // const imageElement = writer.createElement( 'image', {
+                //     src: data.detail
+                // } );
+
+                // // Insert the image in the current selection location.
+                // editor.model.insertContent( imageElement, editor.model.document.selection );
+
+                const el = writer.createElement('mathtex');
+                var html = katex.renderToString(data.detail, {
+                    throwOnError: false
+                });
+                // const viewFragment = editor.data.processor.toView( html );
+                // const modelFragment = editor.data.toModel( viewFragment );   
+
+                // editor.model.insertContent( modelFragment );
+                console.log(html)
+                writer.append( html, el);
+                editor.model.insertContent( el , selection.getFirstPosition() );
+
+                //katex.render(data.detail, el);
             } );
         })
 
@@ -55,6 +88,8 @@ class InsertImage extends Plugin {
                 evt.stop();
             }
         }, { priority: 'highest' } );
+
+        
     }
 };
 

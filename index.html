@@ -6,7 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        
+        .math-tex {
+            display: inline-block !important;
+        }
+        .math-tex figure {
+            margin-top: 5px !important;
+            margin-bottom: 5px !important;
+        }
     </style>
     <link rel="stylesheet" href="node_modules/katex/dist/katex.css">
     <link rel="stylesheet" href="node_modules/remodal/dist/remodal.css">
@@ -21,8 +27,8 @@
 
     <div class="remodal" data-remodal-id="modal">
         <button data-remodal-action="close" class="remodal-close"></button>
-        <h1>Add image url</h1>
-        <input type="text" id="imgUrl" placeholder="Enter image link" style="width: 100%; height:35px;">
+        <h1>Add latex formula</h1>
+        <input type="text" id="latexFrmla" placeholder="Enter formula" style="width: 100%; height:35px;">
         <br><br>
         <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
         <button  onclick="loadImagetoCK()" class="remodal-confirm">OK</button>
@@ -46,16 +52,44 @@
             $("#imgUrl").val(data.src);
         }
         function loadImagetoCK() {
-            let imgUrl = $("#imgUrl").val();
-            fireEvent(imgUrl);
-            $("#imgUrl").val('');
+            let latexText = $("#latexFrmla").val();
+            let imgUrl = generateLatexToPng(latexText);
+            let obj = {
+                imgURL: imgUrl,
+                latexFrmla: latexText
+            }
+            fireEvent(obj);
+            $("#latexFrmla").val('');
             inst.close();
         }
-        function fireEvent(data) {
+        function fireEvent(obj) {
             const event = new CustomEvent("setDatatoCK", {
-                "detail": data
+                "detail": obj
             });
             window.dispatchEvent(event);
+        }
+        function generateLatexToPng(latexText) {
+            var imgUrl = "";
+            $.ajax({
+                url: 'http://localhost:3001/convert',
+                type: 'POST',
+                async: false,
+                data: {
+                    latexInput: latexText,
+                    outputFormat: 'PNG',
+                    outputScale: '100%'
+                },
+                success: function(data) {
+                    if ((resultDataJSON = JSON.parse(data)) && !data.error) {
+                        imgUrl =  'http://localhost:3001/'+resultDataJSON.imageURL;
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    alert('Error communicating with server');
+                }
+            });
+            return imgUrl;
         }
     </script>
 </body>

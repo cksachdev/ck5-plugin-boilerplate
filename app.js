@@ -5,15 +5,16 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Image from '@ckeditor/ckeditor5-image/src/image';
+import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
+import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption';
+import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
+import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 
-import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
-import katex from 'katex';
-
 
 class InsertImage extends Plugin {
     init() {
@@ -40,9 +41,10 @@ class InsertImage extends Plugin {
         });
 
         editor.model.schema.register('mathtex', {
-            allowWhere: '$block',
+            allowWhere: '$text',
+            isObject: true,
             allowContentOf: '$block',
-            allowAttributes: [ 'id' ],
+            allowAttributes: [ 'data-mthml'],
             isLimit: true,
         });
       
@@ -51,33 +53,26 @@ class InsertImage extends Plugin {
             view: {
               name: 'span',
               classes: 'math-tex',
-              id: 'ss'
+              attribute: {
+                'data-mthml': true
+               }
             }
         });
-
+        
         window.addEventListener('setDatatoCK', function(data){
             const selection = editor.model.document.selection;
             editor.model.change( writer => {
-                // const imageElement = writer.createElement( 'image', {
-                //     src: data.detail
-                // } );
+                const imageElement = writer.createElement( 'image', {
+                    src: data.detail.imgURL,
+                    'data-info': data.detail.latexFrmla
+                } );
+                const el = writer.createElement('mathtex', {
+                    'data-mthml': data.detail.latexFrmla
+                });
+                writer.append( imageElement, el);
 
                 // // Insert the image in the current selection location.
-                // editor.model.insertContent( imageElement, editor.model.document.selection );
-
-                const el = writer.createElement('mathtex');
-                var html = katex.renderToString(data.detail, {
-                    throwOnError: false
-                });
-                // const viewFragment = editor.data.processor.toView( html );
-                // const modelFragment = editor.data.toModel( viewFragment );   
-
-                // editor.model.insertContent( modelFragment );
-                console.log(html)
-                writer.append( html, el);
-                editor.model.insertContent( el , selection.getFirstPosition() );
-
-                //katex.render(data.detail, el);
+                editor.model.insertContent( el, selection );
             } );
         })
 
@@ -110,8 +105,12 @@ function doubleClickHandler(element, event) {
 
 ClassicEditor
     .create(document.querySelector('#editor'), {
-        plugins: [Essentials, Paragraph, Bold, Italic, Image, InsertImage],
-        toolbar: ['bold', 'italic', 'insertImage']
+        plugins: [Essentials, Paragraph, Bold, Italic, InsertImage, Image, ImageToolbar, ImageStyle, ImageResize ],
+        toolbar: ['bold', 'italic', 'insertImage', 'imageUpload'],
+        image: {
+            toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
+            styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
+        },
     })
     .then(editor => {
         console.log('Editor was initialized', editor);

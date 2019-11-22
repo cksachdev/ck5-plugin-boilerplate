@@ -44,8 +44,7 @@ class InsertImage extends Plugin {
             allowWhere: '$text',
             isObject: true,
             allowContentOf: '$block',
-            allowAttributes: [ 'data-mthml'],
-            isLimit: true,
+            allowAttributes: [ 'data-mthml']
         });
       
         editor.conversion.elementToElement({

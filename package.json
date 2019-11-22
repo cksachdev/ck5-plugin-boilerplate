@@ -23,6 +23,7 @@
     },
     "homepage": "https://github.com/cksachdev/ck5-plugin-boilerplate#readme",
     "dependencies": {
+        "@babel/core": "^7.7.2",
         "@ckeditor/ckeditor5-basic-styles": "^15.0.0",
         "@ckeditor/ckeditor5-core": "^15.0.0",
         "@ckeditor/ckeditor5-dev-utils": "^12.0.5",
@@ -32,6 +33,7 @@
         "@ckeditor/ckeditor5-paragraph": "^15.0.0",
         "@ckeditor/ckeditor5-theme-lark": "^15.0.0",
         "@ckeditor/ckeditor5-ui": "^15.0.0",
+        "babel-loader": "^8.0.6",
         "katex": "^0.11.1",
         "postcss-loader": "^3.0.0",
         "raw-loader": "^3.1.0",

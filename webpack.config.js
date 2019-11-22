@@ -2,51 +2,74 @@
 
 'use strict';
 
-const path = require('path');
+const path = require("path");
 const { styles } = require('@ckeditor/ckeditor5-dev-utils');
 
 module.exports = {
-    // https://webpack.js.org/configuration/entry-context/
-    entry: './app.js',
+  entry: './app.js',
 
-    // https://webpack.js.org/configuration/output/
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
-    },
+  output: {
+    path: __dirname + '/dist',
+    filename: 'bundle.js'
+  },
 
-    module: {
-        rules: [{
-                test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+  mode: 'development',
 
-                use: ['raw-loader']
-            },
-            {
-                test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+  resolve: {
+    extensions: ['.js'],
+    modules: [path.basename(__dirname) + "/node_modules"]
+  },
 
-                use: [{
-                        loader: 'style-loader',
-                        options: {
-                            injectType: 'singletonStyleTag'
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: styles.getPostCssConfig({
-                            themeImporter: {
-                                themePath: require.resolve('@ckeditor/ckeditor5-theme-lark')
-                            },
-                            minify: true
-                        })
-                    }
-                ]
-            }
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          { loader: 'babel-loader' }
+        ],
+        exclude: /node_modules/
+      }, {
+        test: /\.html$/,
+        use: [
+          { loader: 'file-loader', options: { name: '[name].html' } },
+          { loader: 'extract-loader' },
+          { loader: 'html-loader', options: { attrs: ['img:src'] } },
         ]
-    },
-
-    // Useful for debugging.
-    devtool: 'source-map',
-
-    // By default webpack logs warnings if the bundle is bigger than 200kb.
-    performance: { hints: false }
+      }, {
+        test: /\.(eot|ttf|woff|woff2)$/,
+        use: [
+          { loader: 'file-loader', options: { name: '[name].[ext]' } },
+        ]
+      }, {
+        test: /\.svg$/,
+        use: [
+          { loader: 'raw-loader' },
+        ]
+      }, {
+        oneOf: [
+          {
+            test: /ckeditor5-[^/]+\/theme\/[\w-/]+\.css$/,
+            use: [
+              { loader: 'style-loader', options: { injectType: "singletonStyleTag" } },
+              {
+                loader: 'postcss-loader',
+                options: styles.getPostCssConfig({
+                  themeImporter: {
+                    themePath: require.resolve('@ckeditor/ckeditor5-theme-lark')
+                  },
+                  minify: true
+                })
+              }
+            ]
+          }, {
+            test: /\.css$/,
+            use: [
+              { loader: 'style-loader' },
+              { loader: 'css-loader' }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 };

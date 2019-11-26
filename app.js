@@ -17,6 +17,7 @@ import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
 
 class InsertImage extends Plugin {
+
     init() {
         const editor = this.editor;
         const view = editor.editing.view;
@@ -44,7 +45,7 @@ class InsertImage extends Plugin {
             allowWhere: '$text',
             isObject: true,
             allowContentOf: '$block',
-            allowAttributes: [ 'data-mthml']
+            allowAttributes: ['data-mthml']
         });
       
         editor.conversion.elementToElement({
@@ -57,19 +58,19 @@ class InsertImage extends Plugin {
                }
             }
         });
-        
+
         window.addEventListener('setDatatoCK', function(data){
             const selection = editor.model.document.selection;
+            // const viewEditableRoot = editor.editing.view.document.getRoot();
             editor.model.change( writer => {
+                // writer.setAttribute( 'data-mthml', data.detail.latexFrmla, viewEditableRoot);
                 const imageElement = writer.createElement( 'image', {
                     src: data.detail.imgURL,
-                    'data-info': data.detail.latexFrmla
                 } );
                 const el = writer.createElement('mathtex', {
                     'data-mthml': data.detail.latexFrmla
                 });
                 writer.append( imageElement, el);
-
                 // // Insert the image in the current selection location.
                 editor.model.insertContent( el, selection );
             } );

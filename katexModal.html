@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="libs/mathquill/mathquill.css">
   <script src="libs/mathquill/mathquill.min.js"></script>
   <link rel="stylesheet" href="katexStyle.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
 
 </head>
 
@@ -666,7 +666,7 @@
         for (var index = 0; index < equations.length; index++) {
           var equation = equations[index];
           var equationHtml = renderToString(equation.latex);
-          html += '<div class="item select list-items math-lib" onclick="latexToEquations(\'Hello\')">' +
+          html += '<div class="item select list-items math-lib" onclick=\'latexToEquations('+JSON.stringify(equation)+')\'>' +
             '<div class="middle aligned content">' +
             '<div class="math-lib-header">' + equation.title + '</div>' +
             '<div class="meta math-lib-meta" id="' + name + index + '">' + equationHtml + '</div>' +
@@ -692,7 +692,7 @@
           }
           html += '<div class="two wide column math-symbols">' +
             '<span class="symbol-div">' +
-            '<div class="math-symbol ' + mqClass + '" id="' + name + index + '">' + symbolHtml + '</div>' +
+            '<div class="math-symbol ' + mqClass + '" id="' + name + index + '" onclick=\'latexToEquations('+JSON.stringify(symbol)+')\' >' + symbolHtml + '</div>' +
             '<span class="symbol-latex">' + symbol.latex + '</span>' +
             '</span> </div>';
         }
@@ -711,7 +711,7 @@
           }
           html += '<div class="two wide column math-symbols">' +
             '<span class="symbol-div">' +
-            '<div class="math-symbol ' + mqClass + '" id="' + name + index + '">' + symbolHtml + '</div>' +
+            '<div class="math-symbol ' + mqClass + '" id="' + name + index + '" onclick=\'latexToEquations('+JSON.stringify(symbol)+')\' >' + symbolHtml + '</div>' +
             '<span class="symbol-latex">' + symbol.latex + '</span>' +
             '</span> </div>';
         }
@@ -723,7 +723,7 @@
         for (var index = 0; index < equations.length; index++) {
           var equation = equations[index];
           html += '<div class="four wide column math-symbols"><span class="advanc-symbol-div">' +
-            '<div class="math-symbol" id="' + name + index + '">' +
+            '<div class="math-symbol" id="' + name + index + '" onclick=\'latexToEquations('+JSON.stringify(equation)+')\'>' +
             '<img src="' + advancedImageArray[index] + '">' +
             '</div> </span>' +
             '</div></div></div>';
@@ -783,7 +783,7 @@
               mathField.write(latexVal);
               if (_.isEmpty(mathField.latex())) {
                 $('#advInput').val(latexVal);
-                $scope.advanceField = true;
+                advanceField = true;
                 $("#advanceFieldMath").hide();
                 $("#advanceFieldInput").show();
               }
@@ -860,36 +860,33 @@
           }
         });
       }, 300);
-      window.latexToEquations = function(object) {
-        console.log(object);
-      }
-      // function latexToEquations() {
-      //   alert("Hello");
+      
+      // window.latexToEquations = function(index) {
+      //   console.log(index);
       // }
-      // var latexToEquations = function (object, callbackFn) {
-        // var cursorPosition = !_.isUndefined($scope.cursorPosition) ? $scope.cursorPosition : $scope.latexValue.length;
-        // if($scope.advanceField) {
-        //   if(object.latexCmd) {
-        //     $scope.latexValue = $scope.latexValue.substr(0, cursorPosition) + object.latexValue + $scope.latexValue.substr(cursorPosition);
-        //   } else if(object.latex){
-        //     $scope.latexValue = $scope.latexValue.substr(0, cursorPosition) + object.latex + $scope.latexValue.substr(cursorPosition);
-        //   } else{
-        //     $scope.latexValue = $scope.latexValue.substr(0, cursorPosition) + object.latexText + $scope.latexValue.substr(cursorPosition);
-        //   }
-        // }
-        // else{
-        //   if(object.latexCmd) {
-        //     mathField.cmd(object.latexCmd);
-        //   } else if(object.latex){
-        //     mathField.write(object.latex);
-        //   } else{
-        //     $scope.latexValue = $scope.latexValue.substr(0, cursorPosition)  + object.latexText + $scope.latexValue.substr(cursorPosition);
-        //   }
-        // }
-    // };
+      
+      window.latexToEquations = function(object) {
+        if(advanceField) {
+          if(object.latexCmd) {
+            insertTextAtCaret(object.latexValue);
+          } else if(object.latex){
+            insertTextAtCaret(object.latex);
+          } else{
+            insertTextAtCaret(object.latexText);
+          }
+        } else{
+          if(object.latexCmd) {
+            mathField.cmd(object.latexCmd);
+          } else if(object.latex){
+            mathField.write(object.latex);
+          } else{
+            insertTextAtCaret(object.latexText);
+          }
+        }
+      }
 
-    function insertAtCaret(text) {
-      const textarea = document.querySelector('textarea')
+    function insertTextAtCaret(text) {
+      const textarea = document.getElementById('advInput')
       textarea.setRangeText(
         text,
         textarea.selectionStart,

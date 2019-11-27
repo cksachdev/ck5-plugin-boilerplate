@@ -963,13 +963,15 @@
     
         function openModel() {
             modalInstance.modal('show');
+            $('#advInput').val('');
+            mathField.latex('');
         }
         function closeThisDialog() {
         modalInstance.modal('hide');
     }
 
         function loadDataFromCkEditortoPopup(data) {
-            modalInstance.modal('show');
+            openModel();
             latexToEquations({'latex':data.latex})
         }
         function loadImagetoCKEditor() {

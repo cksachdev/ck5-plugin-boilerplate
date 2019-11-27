@@ -79,7 +79,7 @@ class InsertImage extends Plugin {
         this.listenTo( editor.editing.view.document, 'click', ( evt, data ) => {
             // Is double click
             if ( data.domEvent.detail == 2 ) {
-                doubleClickHandler( data.domTarget, data.domEvent );
+                editorToPopupdoubleClickHandler( data.domTarget, data.domEvent );
                 evt.stop();
             }
         }, { priority: 'highest' } );
@@ -88,7 +88,7 @@ class InsertImage extends Plugin {
     }
 };
 
-function doubleClickHandler(element, event) {
+function editorToPopupdoubleClickHandler(element, event) {
     if (element.nodeName.toLowerCase() == 'img') {
         console.log(element);
         console.log(event);
@@ -97,7 +97,7 @@ function doubleClickHandler(element, event) {
         } else {
             event.returnValue = false;
         }
-        loadDataFromCktoPopup({src: element.src});
+        loadDataFromCkEditortoPopup({src: element.src});
         evt.stop();
     }
     

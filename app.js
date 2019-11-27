@@ -41,34 +41,74 @@ class InsertImage extends Plugin {
             return view;
         });
 
-        editor.model.schema.register('mathtex', {
+        editor.model.schema.register('span', {
             allowWhere: '$text',
-            isObject: true,
-            allowContentOf: '$block',
-            allowAttributes: ['data-mthml']
-        });
-      
+            allowContentOf: '$block'
+        } );
+    
+        // Allow <div> elements in the model to have all attributes.
+        editor.model.schema.addAttributeCheck( context => {
+            if ( context.endsWith('span') ) {
+                return true;
+            }
+        } );
+
         editor.conversion.elementToElement({
-            model: 'mathtex',
+            model: 'span',
             view: {
               name: 'span',
-              classes: 'math-tex',
-              attribute: {
-                'data-mthml': true
-               }
+              classes: 'math-text'
             }
         });
+    
+        // View-to-model converter converting a view <div> with all its attributes to the model.
+        editor.conversion.for( 'upcast' ).elementToElement( {
+            view: 'span',
+            model: ( viewElement, modelWriter ) => {
+                return modelWriter.createElement( 'span', viewElement.getAttributes() );
+            }
+        } );
+    
+        // Model-to-view converter for the <div> element (attrbiutes are converted separately).
+        editor.conversion.for( 'downcast' ).elementToElement( {
+            model: 'span',
+            view: 'span'
+        } );
+    
+        // Model-to-view converter for <div> attributes.
+        // Note that a lower-level, event-based API is used here.
+        editor.conversion.for('downcast' ).add( dispatcher => {
+            dispatcher.on( 'attribute', ( evt, data, conversionApi ) => {
+                // Convert <div> attributes only.
+                if ( data.item.name != 'span' ) {
+                    return;
+                }
+    
+                const viewWriter = conversionApi.writer;
+                const viewDiv = conversionApi.mapper.toViewElement( data.item );
+    
+                // In the model-to-view conversion we convert changes.
+                // An attribute can be added or removed or changed.
+                // The below code handles all 3 cases.
+                if ( data.attributeNewValue ) {
+                    viewWriter.setAttribute( data.attributeKey, data.attributeNewValue, viewDiv );
+                } else {
+                    viewWriter.removeAttribute( data.attributeKey, viewDiv );
+                }
+            } );
+        } );
 
         window.addEventListener('setDatatoCK', function(data){
             const selection = editor.model.document.selection;
             // const viewEditableRoot = editor.editing.view.document.getRoot();
             editor.model.change( writer => {
-                // writer.setAttribute( 'data-mthml', data.detail.latexFrmla, viewEditableRoot);
-                const imageElement = writer.createElement( 'image', {
+                 // writer.setAttribute( 'data-mthml', data.detail.latexFrmla, viewEditableRoot);
+                 const imageElement = writer.createElement( 'image', {
                     src: data.detail.imgURL,
                 } );
-                const el = writer.createElement('mathtex', {
-                    'data-mthml': data.detail.latexFrmla
+                const el = writer.createElement('span', {
+                    'data-mthml': data.detail.latexFrmla,
+                    'data-advanced' : false
                 });
                 writer.append( imageElement, el);
                 // // Insert the image in the current selection location.
@@ -90,15 +130,18 @@ class InsertImage extends Plugin {
 
 function editorToPopupdoubleClickHandler(element, event) {
     if (element.nodeName.toLowerCase() == 'img') {
-        console.log(element);
-        console.log(event);
+        var latexStr = '';
+        var spanElement = element.parentElement.parentElement;
+        if(spanElement.className == 'math-text') {
+            latexStr = spanElement.getAttribute("data-mthml");
+        }
         if (typeof event.stopPropagation != 'undefined') { // old I.E compatibility.
             event.stopPropagation();
         } else {
             event.returnValue = false;
         }
-        loadDataFromCkEditortoPopup({src: element.src});
-        evt.stop();
+        loadDataFromCkEditortoPopup({latex:latexStr});
+        // event.stop();
     }
     
 };

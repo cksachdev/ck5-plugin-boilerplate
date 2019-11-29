@@ -89,7 +89,12 @@
         .unsupported-resolution {
             display: block;
         }
+
     }*/
+    =======
+    }
+
+    >>>>>>>1c6b270387e9cd64a922a36f97d39c3c1893a37d
     </style>
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
     <link rel="stylesheet" href="libs/katex/katex.min.css">
@@ -126,9 +131,8 @@
                 <a class="item" data-tab="symbols">Symbols</a>
                 <a class="item" data-tab="equations">Equations</a>
                 <a class="item" data-tab="advanced">Advanced</a>
-                <i class="cursor-pointer close link icon math-close-tab" onclick="closeThisDialog();"></i>
-            </div>
-            <div class="math-content qs-scrollbar modal-color">
+                <i class="cursor-pointer close link icon math-close-tab" onclick="closeThisDialog();"></i> </div>
+            <div class="math-content qs-scrollbar">
                 <div class="ui tab segment active math-tab" data-tab="library">
                     <div class="ui large items" id="libraryEquation">
                     </div>
@@ -209,91 +213,35 @@
                     <input id="advInput" type="textarea" class="latex-field" />
                 </div>
                 <div class="ui four wide column right aligned math-add-button-div">
-                    <button class="ui basic primary button math-add-button" onclick="loadImagetoCKEditor()" type="button">Add
-                    </button>
+                    <div class="ui nine wide column math-formula" id="advanceFieldInput">
+                        <input id="advInput" type="textarea" class="latex-field" />
+                    </div>
+                    <div class="ui three wide column right aligned math-add-button-div">
+                        <button class="ui basic primary button math-add-button" onclick="loadImagetoCKEditor()" type="button">Add
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="semantic/dist/semantic.min.js"></script>
-    <script src="libs/katex/katex.min.js"></script>
-    <script src="libs/mathquill/mathquill.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
-    <script src="dist/bundle.js"></script>
-    <script>
-    var modalInstance = $('.ui.modal').modal({
-        closable: false,
-        inverted: true
-
-    });
-
-    function openModel() {
-        modalInstance.modal('show');
-    }
-
-    function closeThisDialog() {
-        modalInstance.modal('hide');
-    }
-
-    function loadDataFromCkEditortoPopup(data) {
-        modalInstance.modal('show');
-        $("#advInput").val(data.src);
-    }
-
-    function loadImagetoCKEditor() {
-        let latexText = $("#advInput").val();
-        let imgUrl = generateLatexToPng(latexText);
-        let obj = {
-            imgURL: imgUrl,
-            latexFrmla: latexText
-        }
-        fireEvent(obj);
-        $("#advInput").val('');
-        modalInstance.modal('hide');
-    }
-
-    function fireEvent(obj) {
-        const event = new CustomEvent("setDatatoCK", {
-            "detail": obj
-        });
-        window.dispatchEvent(event);
-    }
-
-    function generateLatexToPng(latexText) {
-        var imgUrl = "";
-        $.ajax({
-            url: 'http://localhost:3001/convert',
-            type: 'POST',
-            async: false,
-            data: {
-                latexInput: latexText,
-                outputFormat: 'PNG',
-                outputScale: '100%'
-            },
-            success: function(data) {
-                if ((resultDataJSON = JSON.parse(data)) && !data.error) {
-                    imgUrl = 'http://localhost:3001/' + resultDataJSON.imageURL;
-
-                }
-            },
-            error: function(e) {
-                console.log(e)
-                alert('Error communicating with server');
-            }
-        });
-        return imgUrl;
-    }
-    </script>
-    <script>
-    $(function() {
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script src="semantic/dist/semantic.min.js"></script>
+        <script src="libs/katex/katex.min.js"></script>
+        <script src="libs/mathquill/mathquill.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+        <script>
+        function generateLatexToPng(latexText) { var imgUrl = "";
+            $.ajax({ url: 'http://localhost:3001/convert', type: 'POST', async: false, data: { latexInput: latexText, outputFormat: 'PNG', outputScale: '100%' }, success: function(data) { if ((resultDataJSON = JSON.parse(data)) && !data.error) { imgUrl = 'http://localhost:3001/' + resultDataJSON.imageURL; } }, error: function(e) { console.log(e) alert('Error communicating with server'); } }); return imgUrl; }
+        </script>
+        <script src="dist/bundle.js">
+        </script>
+        <script>
         var mathField, latex, latexSpan, hiddenSpanArea;
         $('#advInput').val('');
         var cursorPosition = undefined;
         $("#text_hint").show();
         var MQ = MathQuill.getInterface(2);
         var valid = false;
-        var libraryTabInModalEquations = [{
+        var libraryEquations = [{
                 "title": "Area of circle",
                 "latex": "A = \\pi r^2"
             },
@@ -792,6 +740,7 @@
         advancedSymbols.forEach(function(value, index) {
             var url;
             if (value.customImage) {
+                // url = ecEditor.resolvePluginResource(instance.manifest.id, instance.manifest.ver, value.customImage);
                 url = value.customImage;
             } else {
                 url = "https://latex.codecogs.com/gif.latex?" + encodeURIComponent(value.latexText);
@@ -804,7 +753,7 @@
             var html = '';
             for (var index = 0; index < equations.length; index++) {
                 var equation = equations[index];
-                var equationHtml = renderLatexToKatex(equation.latex);
+                var equationHtml = renderToString(equation.latex);
                 html += '<div class="item select list-items math-lib" onclick=\'latexToEquations(' + JSON.stringify(equation) + ')\'>' +
                     '<div class="middle aligned content">' +
                     '<div class="math-lib-header">' + equation.title + '</div>' +
@@ -814,7 +763,7 @@
             $("#libraryEquation").html(html);
         }
 
-        function renderLatexToKatex(string) {
+        function renderToString(string) {
             return katex.renderToString(string, {
                 throwOnError: false
             });
@@ -826,7 +775,7 @@
             for (var index = 0; index < equations.length; index++) {
                 symbol = equations[index];
                 if (name == 'Greek') {
-                    symbolHtml = renderLatexToKatex(symbol.latexDisplay ? symbol.latexDisplay : symbol.latex);
+                    symbolHtml = renderToString(symbol.latexDisplay ? symbol.latexDisplay : symbol.latex);
                 } else {
                     mqClass = 'mq-render'
                     symbolHtml = symbol.latexDisplay ? symbol.latexDisplay : symbol.latex;
@@ -846,7 +795,7 @@
             for (var index = 0; index < equations.length; index++) {
                 symbol = equations[index];
                 if (name == 'Root') {
-                    symbolHtml = renderLatexToKatex(symbol.latexDisplay ? symbol.latexDisplay : symbol.latex);
+                    symbolHtml = renderToString(symbol.latexDisplay ? symbol.latexDisplay : symbol.latex);
                 } else {
                     mqClass = 'mq-render'
                     symbolHtml = symbol.latexDisplay ? symbol.latexDisplay : symbol.latex;
@@ -874,7 +823,7 @@
             $("#advancedSymbols").append(html);
         }
 
-        generateLibraryView(libraryTabInModalEquations, 'libFormula');
+        generateLibraryView(libraryEquations, 'libFormula');
         generateSymbolView(symbols.greek, 'Greek');
         generateSymbolView(symbols.binary, 'Binary');
         generateSymbolView(symbols.arrow, 'Arrow');
@@ -997,7 +946,7 @@
             });
         }, 300);
 
-        window.latexToEquations = function(object) {
+        function latexToEquations(object) {
             if (advanceField) {
                 if (object.latexCmd) {
                     insertTextAtCursor(object.latexValue);
@@ -1026,8 +975,71 @@
                 'end'
             )
         }
-    });
-    </script>
+        var modalInstance = $('.ui.modal').modal({
+            closable: false,
+            inverted: true
+
+        });
+
+        function openModel() {
+            modalInstance.modal('show');
+            $('#advInput').val('');
+            mathField.latex('');
+        }
+
+        function closeThisDialog() {
+            modalInstance.modal('hide');
+        }
+
+        function loadDataFromCkEditortoPopup(data) {
+            openModel();
+            latexToEquations({ 'latex': data.latex })
+        }
+
+        function loadImagetoCKEditor() {
+            let latexText = $("#advInput").val();
+            let imgUrl = generateLatexToPng(latexText);
+            let obj = {
+                imgURL: imgUrl,
+                latexFrmla: latexText,
+                advanced: advanceField
+            }
+            fireEvent(obj);
+            $("#advInput").val('');
+            modalInstance.modal('hide');
+        }
+
+        function fireEvent(obj) {
+            const event = new CustomEvent("setDatatoCK", {
+                "detail": obj
+            });
+            window.dispatchEvent(event);
+        }
+
+        function generateLatexToPng(latexText) {
+            var imgUrl = "";
+            $.ajax({
+                url: 'http://localhost:3001/convert',
+                type: 'POST',
+                async: false,
+                data: {
+                    latexInput: latexText,
+                    outputFormat: 'PNG',
+                    outputScale: '100%'
+                },
+                success: function(data) {
+                    if ((resultDataJSON = JSON.parse(data)) && !data.error) {
+                        imgUrl = 'http://localhost:3001/' + resultDataJSON.imageURL;
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    alert('Error communicating with server');
+                }
+            });
+            return imgUrl;
+        }
+        </script>
 </body>
 </body>
 

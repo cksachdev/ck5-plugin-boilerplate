@@ -65,8 +65,7 @@
 
 <body>
     <div id="editor">
-        <p>Editor content goes here.</p>
-
+        Hello CK!
     </div>
     <div class="unsupported-resolution">
         <div class="message-container">
@@ -971,7 +970,9 @@
     }
 
         function loadDataFromCkEditortoPopup(data) {
+            console.log(data);
             openModel();
+            advanceField = data.advanced;
             latexToEquations({'latex':data.latex})
         }
         function loadImagetoCKEditor() {

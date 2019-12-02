@@ -942,7 +942,7 @@
     }, 300);
 
     function latexToEquations(object) {
-        if (advanceField) {
+        if (advanceField === true || advanceField === 'true') {
             if (object.latexCmd) {
                 insertTextAtCursor(object.latexValue);
             } else if (object.latex) {
@@ -990,6 +990,7 @@
         openModel();
         advanceField = data.advanced;
         latexToEquations({ 'latex': data.latex })
+        console.log(data);
     }
 
     function loadImagetoCKEditor() {

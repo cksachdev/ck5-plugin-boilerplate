@@ -170,7 +170,7 @@
                     <div class="ui right aligned grid">
                         <div class="right floated right aligned six wide column">
                             <select class="ui dropdown equations-dropdown">
-                                <option value="">All Equestions</option>
+                                <option value="">All questions</option>
                                 <option value="all" selected="selected">All Equations</option>
                                 <option value="trig">Trigonometric functions</option>
                                 <option value="supsub">Superscripts and subscripts</option>
@@ -816,6 +816,9 @@
                 '</div></div></div>';
         }
         $("#advancedSymbols").append(html);
+        $('.mq-render').each(function(index, element) {
+        MQ.StaticMath(element);
+    });
     }
 
     generateLibraryView(libraryEquations, 'libFormula');
@@ -1035,10 +1038,10 @@
                     outputScale: '100%'
                 },
                 success: function(data) {
-                    if ((resultDataJSON = JSON.parse(data)) && !data.error) {
-                        imgUrl = 'http://localhost:3001/' + resultDataJSON.imageURL;
-                        resolve(imgUrl);
-                    }
+                    
+                        
+                        resolve(data);
+                 
                 },
                 error: function(e) {
                     console.log(e)

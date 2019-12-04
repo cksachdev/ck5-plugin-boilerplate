@@ -92,7 +92,7 @@
 
     }*/
 
-    }
+    
     </style>
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
     <link rel="stylesheet" href="libs/katex/katex.min.css">
@@ -102,7 +102,7 @@
 
 <body>
     <div id="editor">
-        <p>Editor content goes here.</p>
+        Hello CK!
     </div>
     <div class="unsupported-resolution">
         <div class="message-container">
@@ -945,7 +945,7 @@
     }, 300);
 
     function latexToEquations(object) {
-        if (advanceField) {
+        if (advanceField === true || advanceField === 'true') {
             if (object.latexCmd) {
                 insertTextAtCursor(object.latexValue);
             } else if (object.latex) {
@@ -991,7 +991,9 @@
 
     function loadDataFromCkEditortoPopup(data) {
         openModel();
+        advanceField = data.advanced;
         latexToEquations({ 'latex': data.latex })
+        console.log(data);
     }
 
     function loadImagetoCKEditor() {

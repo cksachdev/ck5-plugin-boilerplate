@@ -5,7 +5,6 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Image from '@ckeditor/ckeditor5-image/src/image';
-import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption'
 import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
 import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
 import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
@@ -17,19 +16,50 @@ import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
 
-class InsertImage extends Plugin {
-
-    
+class MathText extends Plugin {
     init() {
         const editor = this.editor;
         const view = editor.editing.view;
-        const schema = editor.model.schema;
-        const conversion = editor.conversion;
+        const componentFactory  = editor.ui.componentFactory;
 
+        this._defineSchema();
+        this._defineConverters();
+        this._defineListenerModalToCK();
+        view.addObserver( ClickObserver );
+
+        componentFactory.add('MathText', locale => {
+            const view = new ButtonView(locale);
+            view.set({
+                label: 'Add Equations',
+                withText: true,
+                tooltip: true
+            });
+
+            // Callback executed once the image is clicked.
+            this.listenTo(view, 'execute', () => {
+                openModel();
+            });
+            return view;
+        });
+
+        this.listenTo( editor.editing.view.document, 'click', ( evt, data ) => {
+            if ( data.domEvent.detail == 2 ) {
+                this._editorToPopupdoubleClickHandler( data.domTarget, data.domEvent );
+                evt.stop();
+            }
+        }, { priority: 'highest' } );
+
+        
+    }
+
+    _defineSchema () {
+        const schema = this.editor.model.schema;
         schema.extend( 'image', {
             allowAttributes: [ 'data-mathml','advanced' ]
         } );
-
+    }
+    _defineConverters() {
+        const conversion = this.editor.conversion;
         conversion.for( 'downcast' ).add( modelToViewAttributeConverter( 'data-mathml' ) );
         conversion.for( 'upcast' ).attributeToAttribute( {
             view: {
@@ -46,67 +76,44 @@ class InsertImage extends Plugin {
             },
             model: 'advanced'
         } );
-        // Somewhere in your plugin's init() callback:
-        view.addObserver( ClickObserver );
-
-        editor.ui.componentFactory.add('insertImage', locale => {
-            const view = new ButtonView(locale);
-            view.set({
-                label: 'Add Equations',
-                withText: true,
-                tooltip: true
-            });
-
-            // Callback executed once the image is clicked.
-            this.listenTo(view, 'execute', () => {
-                openModel();
-            });
-            return view;
-        });
-            
-
-        window.addEventListener('setDatatoCK', function(data){
-            const selection = editor.model.document.selection;
-            editor.model.change( writer => {
+    }
+    _defineListenerModalToCK () {
+        const model = this.editor.model;
+        const selection = model.document.selection;
+        window.addEventListener('setDatatoCK', (data) => {
+            model.change( writer => {
                  const imageElement = writer.createElement( 'image', {
                     src: data.detail.imgURL,
                     'data-mathml': data.detail.latexFrmla,
                     advanced : data.detail.advanced
                 } );
-                editor.model.insertContent( imageElement, selection );
+                model.insertContent( imageElement, selection );               
             } );
         })
+    }
 
-        this.listenTo( editor.editing.view.document, 'click', ( evt, data ) => {
-            if ( data.domEvent.detail == 2 ) {
-                editorToPopupdoubleClickHandler( data.domTarget, data.domEvent );
-                evt.stop();
+    _editorToPopupdoubleClickHandler(element, event) {
+        if (element.nodeName.toLowerCase() == 'img') {
+            var latexStr = element.getAttribute("data-mathml");
+            var advanced = element.getAttribute("advanced");
+            if (typeof event.stopPropagation != 'undefined') { // old I.E compatibility.
+                event.stopPropagation();
+            } else {
+                event.returnValue = false;
             }
-        }, { priority: 'highest' } );
-
-        
-    }
-};
-
-function editorToPopupdoubleClickHandler(element, event) {
-    if (element.nodeName.toLowerCase() == 'img') {
-        var latexStr = element.getAttribute("data-mathml");
-        var advanced = element.getAttribute("advanced");
-        if (typeof event.stopPropagation != 'undefined') { // old I.E compatibility.
-            event.stopPropagation();
-        } else {
-            event.returnValue = false;
+            loadDataFromCkEditortoPopup({latex:latexStr,advanced :advanced});
+            // event.stop();
         }
-        loadDataFromCkEditortoPopup({latex:latexStr,advanced :advanced});
-        // event.stop();
-    }
-    
+        
+    };
 };
+
+
 
 ClassicEditor
 .create(document.querySelector('#editor'), {
-    plugins: [Essentials, Paragraph, Bold, Italic, Image,InsertImage, ImageToolbar, ImageStyle, ImageResize ],
-    toolbar: ['bold', 'italic', 'insertImage', 'imageUpload'],
+    plugins: [Essentials, Paragraph, Bold, Italic, Image, ImageToolbar, ImageStyle, ImageResize,MathText ],
+    toolbar: ['bold', 'italic', 'imageUpload','MathText'],
     image: {
         toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
         styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']

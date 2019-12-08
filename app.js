@@ -24,7 +24,6 @@ class MathText extends Plugin {
 
         this._defineSchema();
         this._defineConverters();
-        this._defineListenerModalToCK();
         view.addObserver( ClickObserver );
 
         componentFactory.add('MathText', locale => {
@@ -37,7 +36,7 @@ class MathText extends Plugin {
 
             // Callback executed once the image is clicked.
             this.listenTo(view, 'execute', () => {
-                openModel();
+                this._defineEquationWriter();
             });
             return view;
         });
@@ -77,19 +76,30 @@ class MathText extends Plugin {
             model: 'advanced'
         } );
     }
-    _defineListenerModalToCK () {
+    _defineEquationWriter (dataObj = '') {
         const model = this.editor.model;
         const selection = model.document.selection;
-        window.addEventListener('setDatatoCK', (data) => {
-            model.change( writer => {
-                 const imageElement = writer.createElement( 'image', {
-                    src: data.detail.imgURL,
-                    'data-mathml': data.detail.latexFrmla,
-                    advanced : data.detail.advanced
+        const options =  {};
+        options.detail = dataObj;
+        const openerMethod = 'modal';
+        const originalOnInit = options.onInit;
+        options.onInit = finder => {
+            if ( originalOnInit ) {
+				originalOnInit(finder);
+			}
+            finder.addEventListener("equation:add", function(data){
+                console.log("file:choose -> " + JSON.stringify(data.target));
+                model.change( writer => {
+                    const imageElement = writer.createElement( 'image', {
+                        src: data.target.imgURL,
+                        'data-mathml': data.target.latexFrmla,
+                        advanced : data.target.advanced
+                    } );
+                    model.insertContent( imageElement, selection );               
                 } );
-                model.insertContent( imageElement, selection );               
-            } );
-        })
+            });
+        }
+        window.org.ckditor.mathTextPlugin[openerMethod](options);
     }
 
     _editorToPopupdoubleClickHandler(element, event) {
@@ -101,7 +111,7 @@ class MathText extends Plugin {
             } else {
                 event.returnValue = false;
             }
-            loadDataFromCkEditortoPopup({latex:latexStr,advanced :advanced});
+            this._defineEquationWriter({latex:latexStr,advanced :advanced});
             // event.stop();
         }
         

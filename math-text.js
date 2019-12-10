@@ -1,26 +1,26 @@
 "use strict";
-(function(root,factory){if(typeof exports==="object"&&typeof module==="object")module.exports=factory();else if(typeof define==="function"&&define.amd)define("EventBus",[],factory);else if(typeof exports==="object")exports["EventBus"]=factory();else root["EventBus"]=factory()})(this,function(){var EventBusClass={};EventBusClass=function(){this.listeners={}};EventBusClass.prototype={addEventListener:function(type,callback,scope){var args=[];var numOfArgs=arguments.length;for(var i=0;i<numOfArgs;i++){args.push(arguments[i])}args=args.length>3?args.splice(3,args.length-1):[];if(typeof this.listeners[type]!="undefined"){this.listeners[type].push({scope:scope,callback:callback,args:args})}else{this.listeners[type]=[{scope:scope,callback:callback,args:args}]}},removeEventListener:function(type,callback,scope){if(typeof this.listeners[type]!="undefined"){var numOfCallbacks=this.listeners[type].length;var newArray=[];for(var i=0;i<numOfCallbacks;i++){var listener=this.listeners[type][i];if(listener.scope==scope&&listener.callback==callback){}else{newArray.push(listener)}}this.listeners[type]=newArray}},hasEventListener:function(type,callback,scope){if(typeof this.listeners[type]!="undefined"){var numOfCallbacks=this.listeners[type].length;if(callback===undefined&&scope===undefined){return numOfCallbacks>0}for(var i=0;i<numOfCallbacks;i++){var listener=this.listeners[type][i];if((scope?listener.scope==scope:true)&&listener.callback==callback){return true}}}return false},dispatch:function(type,target){var numOfListeners=0;var event={type:type,target:target};var args=[];var numOfArgs=arguments.length;for(var i=0;i<numOfArgs;i++){args.push(arguments[i])}args=args.length>2?args.splice(2,args.length-1):[];args=[event].concat(args);if(typeof this.listeners[type]!="undefined"){var numOfCallbacks=this.listeners[type].length;for(var i=0;i<numOfCallbacks;i++){var listener=this.listeners[type][i];if(listener&&listener.callback){var concatArgs=args.concat(listener.args);listener.callback.apply(listener.scope,concatArgs);numOfListeners+=1}}}},getEvents:function(){var str="";for(var type in this.listeners){var numOfCallbacks=this.listeners[type].length;for(var i=0;i<numOfCallbacks;i++){var listener=this.listeners[type][i];str+=listener.scope&&listener.scope.className?listener.scope.className:"anonymous";str+=" listen for '"+type+"'\n"}}return str}};var EventBus=new EventBusClass;return EventBus});
 
 // Declare Namespace
-window.org = {ckditor: {}};
-var mathtext_plugin = function() {}
+window.org = {ckeditor: {}};
+var mathtext_plugin = function() {
+    this.callbackFn = undefined;
+}
+
 mathtext_plugin.prototype.init = function(obj) {
     loadDataFromCkEditortoPopup(obj);
 }
+
 mathtext_plugin.prototype.modal = function(data) {
     this.init(data.detail);
-    data.onInit.call(this,EventBus);
-    // setTimeout(function(){
-    //     EventBus.dispatch("equation:add", {imgURL:"https://via.placeholder.com/150",latexFrmla:"Test",advanced:true});
-    // },1000)
+    this.callbackFn = data.onInit;
+    console.log(this);
 }
 
-window.org.ckditor.mathTextPlugin = new mathtext_plugin()
+window.org.ckeditor.mathtext = new mathtext_plugin()
 mathtext_plugin = undefined
 
-var mathField, latex, latexSpan, hiddenSpanArea;
+    var mathField, latex, latexSpan;
     $('#advInput').val('');
-    var cursorPosition = undefined;
     $("#text_hint").show();
     var MQ = MathQuill.getInterface(2);
     var valid = false;
@@ -667,16 +667,6 @@ var mathField, latex, latexSpan, hiddenSpanArea;
                 activeTab = e;
             }
         });
-        $('.ui.dropdown.latex-dropdown').dropdown({
-            onChange: function(val, text, $choice) {
-                $scope.latexDropDown = $scope.latexDivision;
-                if (val != "all") {
-                    $scope.latexDropDown = {};
-                    $scope.latexDropDown[text] = $scope.latexDivision[text];
-                }
-                $scope.$safeApply();
-            }
-        });
         $('.ui.dropdown.equations-dropdown').dropdown({
             onChange: function(val, text, $choice) {
                 val = val.capitalize();
@@ -704,7 +694,6 @@ var mathField, latex, latexSpan, hiddenSpanArea;
     setTimeout(function() {
         var mathFieldSpan = document.getElementById('math-field');
         latexSpan = document.getElementById('latex');
-        hiddenSpanArea = document.getElementById('hiddenSpan');
         mathField = MQ.MathField(mathFieldSpan, {
             spaceBehavesLikeTab: true,
             handlers: {
@@ -796,7 +785,7 @@ var mathField, latex, latexSpan, hiddenSpanArea;
                 latexFrmla: latexText,
                 advanced: advanceField
             }
-            EventBus.dispatch("equation:add", obj);
+            org.ckeditor.mathtext.callbackFn(obj);
             $("#advInput").val('');
             modalInstance.modal('hide');
             $("#snippet-autosave-status").removeClass("busy");
@@ -804,13 +793,6 @@ var mathField, latex, latexSpan, hiddenSpanArea;
             $("#snippet-autosave-status_label").empty();
         })
 
-    }
-
-    function fireEvent(obj) {
-        const event = new CustomEvent("setDatatoCK", {
-            "detail": obj
-        });
-        window.dispatchEvent(event);
     }
 
     function generateLatexToPng(latexText) {
@@ -826,16 +808,11 @@ var mathField, latex, latexSpan, hiddenSpanArea;
                     outputScale: '200%'
                 },
                 success: function(data) {
-                    /*  if (data) {
-                          $("#ErrorPopup").html(errorMsg);
-                      }*/
                     resolve(data);
                 },
                 error: function(e) {
-                    console.log(e)
                     $("#snippet-autosave-status_label").html('<p style="color:red;">Status: Error connecting to server</p>');
                     $("#snippet-autosave-status").removeClass("busy");
-                    //alert('Error communicating with server');
                 }
             });
         });

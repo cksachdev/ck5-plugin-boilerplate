@@ -1,20 +1,11 @@
-import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-
-import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-import Image from '@ckeditor/ckeditor5-image/src/image';
-import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
-import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
-import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
+import './libs/mathquill/mathquill.min.js';
 import { modelToViewAttributeConverter } from '@ckeditor/ckeditor5-image/src/image/converters';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
-import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
+import './assets/mathModal';
 
-class MathText extends Plugin {
+export default class MathText extends Plugin {
     init() {
         const editor = this.editor;
         const view = editor.editing.view;
@@ -54,6 +45,7 @@ class MathText extends Plugin {
             allowAttributes: [ 'data-mathtext','advanced' ]
         } );
     }
+
     _defineConverters() {
         const conversion = this.editor.conversion;
         conversion.for( 'downcast' ).add( modelToViewAttributeConverter( 'data-mathtext' ) );
@@ -73,6 +65,7 @@ class MathText extends Plugin {
             model: 'advanced'
         } );
     }
+
     _defineEquationWriter (dataObj = '') {
         const model = this.editor.model;
         const selection = model.document.selection;
@@ -108,40 +101,6 @@ class MathText extends Plugin {
             this._defineEquationWriter({latex:latexStr,advanced :advanced});
             // event.stop();
         }
-        
     };
+
 };
-
-ClassicEditor
-.create(document.querySelector('#editor'), {
-    plugins: [Essentials, Paragraph, Bold, Italic, Image, ImageToolbar, ImageStyle, ImageResize,MathText ],
-    toolbar: ['bold', 'italic', 'imageUpload','MathText'],
-    image: {
-        toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
-        styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
-    },
-})
-.then(editor => {
-    console.log('Editor was initialized', editor);
-    CKEditorInspector.attach(editor);
-})
-.catch(error => {
-    console.error(error.stack);
-});
-
-ClassicEditor
-.create(document.querySelector('#editor1'), {
-    plugins: [Essentials, Paragraph, Bold, Italic, Image, ImageToolbar, ImageStyle, ImageResize,MathText ],
-    toolbar: ['bold', 'italic', 'imageUpload','MathText'],
-    image: {
-        toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
-        styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
-    },
-})
-.then(editor => {
-    console.log('Editor was initialized', editor);
-    CKEditorInspector.attach(editor);
-})
-.catch(error => {
-    console.error(error.stack);
-});

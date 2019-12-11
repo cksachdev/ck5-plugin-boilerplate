@@ -6,7 +6,7 @@ const path = require("path");
 const { styles } = require('@ckeditor/ckeditor5-dev-utils');
 
 module.exports = {
-  entry: './app.js',
+  entry: './index.js',
 
   output: {
     path: __dirname + '/dist',
@@ -28,24 +28,28 @@ module.exports = {
           { loader: 'babel-loader' }
         ],
         exclude: /node_modules/
-      }, {
+      }, 
+      {
         test: /\.html$/,
         use: [
           { loader: 'file-loader', options: { name: '[name].html' } },
           { loader: 'extract-loader' },
           { loader: 'html-loader', options: { attrs: ['img:src'] } },
         ]
-      }, {
+      }, 
+      {
         test: /\.(eot|ttf|woff|woff2)$/,
         use: [
           { loader: 'file-loader', options: { name: '[name].[ext]' } },
         ]
-      }, {
+      }, 
+      {
         test: /\.svg$/,
         use: [
           { loader: 'raw-loader' },
         ]
-      }, {
+      }, 
+      {
         oneOf: [
           {
             test: /ckeditor5-[^/]+\/theme\/[\w-/]+\.css$/,

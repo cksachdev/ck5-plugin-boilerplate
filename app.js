@@ -93,7 +93,7 @@ class MathText extends Plugin {
                 model.insertContent( imageElement, selection );                          
             } );
         }
-        window.org.ckeditor.mathtext[openerMethod](options);
+        window.mathModal.ckeditor.mathtext[openerMethod](options);
     }
 
     _editorToPopupdoubleClickHandler(element, event) {

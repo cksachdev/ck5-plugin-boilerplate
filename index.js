@@ -7,7 +7,7 @@ import Image from '@ckeditor/ckeditor5-image/src/image';
 import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
 import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
 import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
-import MathText from './mathTextPlugin'
+import MathText from './plugin/mathTextPlugin'
 
 ClassicEditor
 .create(document.querySelector('#editor'), {

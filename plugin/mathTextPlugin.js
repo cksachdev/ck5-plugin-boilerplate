@@ -12,11 +12,11 @@ export default class MathText extends Plugin {
     init() {
         const editor = this.editor;
         const view = editor.editing.view;
-        const componentFactory  = editor.ui.componentFactory;
+        const componentFactory = editor.ui.componentFactory;
         this._defineSchema();
         this._defineConverters();
-        view.addObserver( ClickObserver );
-        view.addObserver( DoubleClickObserver );
+        view.addObserver(ClickObserver);
+        view.addObserver(DoubleClickObserver);
 
         componentFactory.add('MathText', locale => {
             const view = new ButtonView(locale);
@@ -34,20 +34,20 @@ export default class MathText extends Plugin {
             return view;
         });
 
-        this.listenTo( editor.editing.view.document, 'dblclick', ( evt, data ) => {
+        this.listenTo(editor.editing.view.document, 'dblclick', (evt, data) => {
             let ifrm = document.getElementById('mathModalIframe')
             if (data.domTarget.nodeName.toLowerCase() == 'img' && data.domTarget.hasAttribute("data-mathtext") && !ifrm) {
                 this._loadIframeModal('dbClick', data);
             }
             evt.stop();
-        }, { priority: 'highest' } );
+        }, { priority: 'highest' });
     }
 
-    _loadIframeModal(type, data="") {
+    _loadIframeModal(type, data = "") {
         const that = this;
         var iframe = document.createElement('iframe');
         iframe.id = 'mathModalIframe';
-        iframe.style=`border: none;z-index:1001;border: 1px solid #ccc;
+        iframe.style = `border: none;z-index:1001;border: 1px solid #ccc;
                         --width: 500px;
                         --height: 480px;
                         position: fixed;
@@ -59,21 +59,22 @@ export default class MathText extends Plugin {
                         bottom: calc( ( 100% - var(--height) ) / 2 );
                         border-radius: 5px;
                         box-shadow: 3px 5px 4px #00000030;`;
-        iframe.src = '../../../../../assets/libs/mathEquation/plugin/mathModal/index.html';
+        //iframe.src = '../../../../../assets/libs/mathEquation/plugin/mathModal/index.html';
+        iframe.src = '../popupui/index.html';
         document.body.appendChild(iframe);
         var iframeBackdrop = document.createElement('div');
         iframeBackdrop.id = 'iframeBackdrop';
         iframeBackdrop.style = "background-color: #00000040;width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 1000;";
-        iframeBackdrop.onclick = function () {
+        iframeBackdrop.onclick = function() {
             that._removeIframeModal();
         };
         document.body.appendChild(iframeBackdrop);
-        iframe.onload = function() {  
+        iframe.onload = function() {
             iframeObj = this;
-            if(type === 'btnClick') {
+            if (type === 'btnClick') {
                 that._defineEquationWriter();
-            } else if(type === 'dbClick') {
-                that._editorToPopupdoubleClickHandler(data.domTarget, data.domEvent );
+            } else if (type === 'dbClick') {
+                that._editorToPopupdoubleClickHandler(data.domTarget, data.domEvent);
             }
         };
     }
@@ -83,53 +84,53 @@ export default class MathText extends Plugin {
         iframeObj.remove();
     }
 
-    _defineSchema () {
+    _defineSchema() {
         const schema = this.editor.model.schema;
-        schema.extend( 'image', {
-            allowAttributes: [ 'data-mathtext','advanced' ]
-        } );
+        schema.extend('image', {
+            allowAttributes: ['data-mathtext', 'advanced']
+        });
     }
 
     _defineConverters() {
         const conversion = this.editor.conversion;
-        conversion.for( 'downcast' ).add( modelToViewAttributeConverter( 'data-mathtext' ) );
-        conversion.for( 'upcast' ).attributeToAttribute( {
+        conversion.for('downcast').add(modelToViewAttributeConverter('data-mathtext'));
+        conversion.for('upcast').attributeToAttribute({
             view: {
                 name: 'img',
                 key: 'data-mathtext'
             },
             model: 'data-mathtext'
-        } );
-        conversion.for( 'downcast' ).add( modelToViewAttributeConverter( 'advanced' ) );
-        conversion.for( 'upcast' ).attributeToAttribute( {
+        });
+        conversion.for('downcast').add(modelToViewAttributeConverter('advanced'));
+        conversion.for('upcast').attributeToAttribute({
             view: {
                 name: 'img',
                 key: 'advanced'
             },
             model: 'advanced'
-        } );
+        });
     }
 
-    _defineEquationWriter (dataObj = '') {
+    _defineEquationWriter(dataObj = '') {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const options =  {};
-        options.detail = dataObj; 
+        const options = {};
+        options.detail = dataObj;
         const openerMethod = 'modal';
         const originalOnInit = options.onInit;
         options.onInit = data => {
             if (originalOnInit) {
-				originalOnInit(data);
-			}
-            model.change( writer => {
-                const imageElement = writer.createElement( 'image', {
+                originalOnInit(data);
+            }
+            model.change(writer => {
+                const imageElement = writer.createElement('image', {
                     src: data.imgURL,
                     'data-mathtext': encodeURIComponent(data.latexFrmla),
-                    advanced : data.advanced
+                    advanced: data.advanced
                 });
                 this._removeIframeModal();
-                model.insertContent( imageElement, selection );                          
-            } );
+                model.insertContent(imageElement, selection);
+            });
         }
         iframeObj.contentWindow.mathModal.ckeditor.mathtext[openerMethod](options);
     }
@@ -142,7 +143,7 @@ export default class MathText extends Plugin {
         } else {
             event.returnValue = false;
         }
-        this._defineEquationWriter({latex:latexStr,advanced :advanced});
+        this._defineEquationWriter({ latex: latexStr, advanced: advanced });
     };
 
 };

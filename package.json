@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "watch": "webpack --mode development -w",
-        "build": "webpack --mode production"
+        "build": "webpack --mode production",
+        "deploy": "cd mathmodal && npm run deploy && cd ../ && npm run build"
     },
     "repository": {
         "type": "git",
@@ -46,10 +47,13 @@
     },
     "devDependencies": {
         "@ckeditor/ckeditor5-inspector": "^1.4.0",
+        "clean-webpack-plugin": "^3.0.0",
+        "copy-webpack-plugin": "^5.1.1",
         "extract-text-webpack-plugin": "^3.0.2",
         "file-loader": "^5.0.2",
         "gulp": "^4.0.2",
         "gulp-clean-css": "^4.2.0",
-        "gulp-concat": "^2.6.1"
+        "gulp-concat": "^2.6.1",
+        "zip-webpack-plugin": "^3.0.0"
     }
 }

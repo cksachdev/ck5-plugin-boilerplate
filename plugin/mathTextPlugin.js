@@ -2,9 +2,11 @@ import { modelToViewAttributeConverter } from '@ckeditor/ckeditor5-image/src/ima
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
-import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/sigma-svgrepo-com.svg';
-//import imageIcon from '../plugin/sigma-svgrepo-com.svg';
+import DoubleClickObserver from '../plugin/doubleClickObserver';
 var iframeObj;
+
+var imageIcon = `<?xml version="1.0" encoding="iso-8859-1"?> <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"> <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 190 190" style="enable-background:new 0 0 190 190;" xml:space="preserve"> <path d="M3.53,0h182.94v44.78h-32.439V32.439H73.017L125.42,95l-52.403,62.561h81.015V145.22h32.439V190H3.53l79.574-95L3.53,0z"/> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>`;
+
 export default class MathText extends Plugin {
 
     init() {
@@ -14,12 +16,14 @@ export default class MathText extends Plugin {
         this._defineSchema();
         this._defineConverters();
         view.addObserver( ClickObserver );
+        view.addObserver( DoubleClickObserver );
 
         componentFactory.add('MathText', locale => {
             const view = new ButtonView(locale);
             view.set({
                 label: 'Add Equations',
                 icon: imageIcon,
+                withText: false,
                 tooltip: true
             });
 
@@ -30,13 +34,12 @@ export default class MathText extends Plugin {
             return view;
         });
 
-        this.listenTo( editor.editing.view.document, 'click', ( evt, data ) => {
-            if ( data.domEvent.detail == 3 ) {
-                if (data.domTarget.nodeName.toLowerCase() == 'img' && data.domTarget.hasAttribute("data-mathtext")) {
-                    this._loadIframeModal('dbClick', data);
-                }
-                evt.stop();
+        this.listenTo( editor.editing.view.document, 'dblclick', ( evt, data ) => {
+            let ifrm = document.getElementById('mathModalIframe')
+            if (data.domTarget.nodeName.toLowerCase() == 'img' && data.domTarget.hasAttribute("data-mathtext") && !ifrm) {
+                this._loadIframeModal('dbClick', data);
             }
+            evt.stop();
         }, { priority: 'highest' } );
     }
 
@@ -44,10 +47,27 @@ export default class MathText extends Plugin {
         const that = this;
         var iframe = document.createElement('iframe');
         iframe.id = 'mathModalIframe';
-        iframe.style="border: none;min-height: 520px; width:500px; position: fixed;top: 25%;left: 33%;";
-        iframe.src = 'mathModal/index.html';
+        iframe.style=`border: none;z-index:1001;border: 1px solid #ccc;
+                        --width: 500px;
+                        --height: 480px;
+                        position: fixed;
+                        width: var(--width);
+                        height: var(--height);
+                        left: calc( ( 100% - var(--width) ) / 2 );
+                        right: calc( ( 100% - var(--width) ) / 2 );
+                        top: calc( ( 100% - var(--height) ) / 2 );
+                        bottom: calc( ( 100% - var(--height) ) / 2 );
+                        border-radius: 5px;
+                        box-shadow: 3px 5px 4px #00000030;`;
+        iframe.src = '../../../../../assets/libs/mathEquation/plugin/mathModal/index.html';
         document.body.appendChild(iframe);
-        console.log('iframe.contentWindow =', iframe.contentWindow);
+        var iframeBackdrop = document.createElement('div');
+        iframeBackdrop.id = 'iframeBackdrop';
+        iframeBackdrop.style = "background-color: #00000040;width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 1000;";
+        iframeBackdrop.onclick = function () {
+            that._removeIframeModal();
+        };
+        document.body.appendChild(iframeBackdrop);
         iframe.onload = function() {  
             iframeObj = this;
             if(type === 'btnClick') {
@@ -59,6 +79,7 @@ export default class MathText extends Plugin {
     }
 
     _removeIframeModal() {
+        iframeObj.nextSibling.remove();
         iframeObj.remove();
     }
 
@@ -103,7 +124,7 @@ export default class MathText extends Plugin {
             model.change( writer => {
                 const imageElement = writer.createElement( 'image', {
                     src: data.imgURL,
-                    'data-mathtext': data.latexFrmla,
+                    'data-mathtext': encodeURIComponent(data.latexFrmla),
                     advanced : data.advanced
                 });
                 this._removeIframeModal();
@@ -114,7 +135,7 @@ export default class MathText extends Plugin {
     }
 
     _editorToPopupdoubleClickHandler(element, event) {
-        var latexStr = element.getAttribute("data-mathtext");
+        var latexStr = decodeURIComponent(element.getAttribute("data-mathtext"));
         var advanced = element.getAttribute("advanced");
         if (typeof event.stopPropagation != 'undefined') { // old I.E compatibility.
             event.stopPropagation();

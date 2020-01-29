@@ -84,16 +84,12 @@ module.exports = {
         {
             from: './plugin',
             to: './plugin'
-        },
-        {
-            from: './popupui',
-            to: './popupui'
-        },
+        }
 
     ]),
     new ZipPlugin({
         path: path.join(__dirname, './dist'),
-        filename: 'mathTextPlugin.zip',
+        filename: 'mathmodal.zip',
         fileOptions: {
             mtime: new Date(),
             compress: true,

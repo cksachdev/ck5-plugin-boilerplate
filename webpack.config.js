@@ -84,8 +84,11 @@ module.exports = {
         {
             from: './plugin',
             to: './plugin'
+        },
+        {
+          from: './index.html',
+          to: './'
         }
-
     ]),
     new ZipPlugin({
         path: path.join(__dirname, './dist'),

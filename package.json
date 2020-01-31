@@ -5,7 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "watch": "webpack --mode development -w"
+        "watch": "webpack --mode development -w",
+        "build": "webpack --mode production",
+        "deploy": "cd mathmodal && npm run deploy && cd ../ && npm run build"
     },
     "repository": {
         "type": "git",
@@ -34,18 +36,24 @@
         "@ckeditor/ckeditor5-paragraph": "^15.0.0",
         "@ckeditor/ckeditor5-theme-lark": "^15.0.0",
         "@ckeditor/ckeditor5-ui": "^15.0.0",
-        "angular2-uuid": "^1.1.1",
         "babel-loader": "^8.0.6",
+        "css-loader": "^3.3.0",
         "katex": "^0.11.1",
         "postcss-loader": "^3.0.0",
         "raw-loader": "^3.1.0",
-        "remodal": "^1.1.1",
-        "semantic-ui": "^2.4.2",
         "style-loader": "^1.0.0",
         "webpack": "^4.41.2",
         "webpack-cli": "^3.3.10"
     },
     "devDependencies": {
-        "@ckeditor/ckeditor5-inspector": "^1.4.0"
+        "@ckeditor/ckeditor5-inspector": "^1.4.0",
+        "clean-webpack-plugin": "^3.0.0",
+        "copy-webpack-plugin": "^5.1.1",
+        "extract-text-webpack-plugin": "^3.0.2",
+        "file-loader": "^5.0.2",
+        "gulp": "^4.0.2",
+        "gulp-clean-css": "^4.2.0",
+        "gulp-concat": "^2.6.1",
+        "zip-webpack-plugin": "^3.0.0"
     }
 }

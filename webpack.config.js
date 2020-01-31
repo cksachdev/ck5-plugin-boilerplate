@@ -4,9 +4,12 @@
 
 const path = require("path");
 const { styles } = require('@ckeditor/ckeditor5-dev-utils');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './app.js',
+  entry: './index.js',
 
   output: {
     path: __dirname + '/dist',
@@ -28,24 +31,28 @@ module.exports = {
           { loader: 'babel-loader' }
         ],
         exclude: /node_modules/
-      }, {
+      }, 
+      {
         test: /\.html$/,
         use: [
           { loader: 'file-loader', options: { name: '[name].html' } },
           { loader: 'extract-loader' },
           { loader: 'html-loader', options: { attrs: ['img:src'] } },
         ]
-      }, {
+      }, 
+      {
         test: /\.(eot|ttf|woff|woff2)$/,
         use: [
           { loader: 'file-loader', options: { name: '[name].[ext]' } },
         ]
-      }, {
+      }, 
+      {
         test: /\.svg$/,
         use: [
           { loader: 'raw-loader' },
         ]
-      }, {
+      }, 
+      {
         oneOf: [
           {
             test: /ckeditor5-[^/]+\/theme\/[\w-/]+\.css$/,
@@ -71,5 +78,31 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  plugins: [
+     new CleanWebpackPlugin(),
+    // copy the index.html and templated to eidtor filder
+    new CopyWebpackPlugin([
+        {
+            from: './plugin',
+            to: './plugin'
+        },
+        {
+          from: './index.html',
+          to: './'
+        }
+    ]),
+    new ZipPlugin({
+        path: path.join(__dirname, './dist'),
+        filename: 'popupui.zip',
+        fileOptions: {
+            mtime: new Date(),
+            compress: true,
+            forceZip64Format: false,
+        },
+        zipOptions: {
+            forceZip64Format: false,
+        },
+    })
+  ]
 };

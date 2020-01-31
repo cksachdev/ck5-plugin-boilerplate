@@ -1,0 +1,3 @@
+[submodule "mathmodal"]
+	path = mathmodal
+	url = https://github.com/cksachdev/mathmodal.git

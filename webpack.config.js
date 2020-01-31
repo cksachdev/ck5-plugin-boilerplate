@@ -6,6 +6,8 @@ const path = require("path");
 const { styles } = require('@ckeditor/ckeditor5-dev-utils');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 module.exports = {
   entry: './index.js',
 
@@ -78,7 +80,7 @@ module.exports = {
     ]
   },
   plugins: [
-    // new CleanWebpackPlugin(['dist']),
+     new CleanWebpackPlugin(),
     // copy the index.html and templated to eidtor filder
     new CopyWebpackPlugin([
         {
@@ -92,13 +94,12 @@ module.exports = {
     ]),
     new ZipPlugin({
         path: path.join(__dirname, './dist'),
-        filename: 'mathmodal.zip',
+        filename: 'popupui.zip',
         fileOptions: {
             mtime: new Date(),
             compress: true,
             forceZip64Format: false,
         },
-        exclude: ['bundle.js'],
         zipOptions: {
             forceZip64Format: false,
         },

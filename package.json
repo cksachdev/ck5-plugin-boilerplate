@@ -31,7 +31,7 @@
         "@ckeditor/ckeditor5-dev-utils": "^12.0.5",
         "@ckeditor/ckeditor5-editor-classic": "^15.0.0",
         "@ckeditor/ckeditor5-essentials": "^15.0.0",
-        "@ckeditor/ckeditor5-image": "^15.0.0",
+        "@ckeditor/ckeditor5-image": "^27.0.0",
         "@ckeditor/ckeditor5-link": "^15.0.0",
         "@ckeditor/ckeditor5-paragraph": "^15.0.0",
         "@ckeditor/ckeditor5-theme-lark": "^15.0.0",
